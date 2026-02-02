@@ -1,0 +1,281 @@
+{
+  "rules": [
+    {
+      "id": "RULE_001",
+      "name": "Suspicious Process Execution",
+      "description": "Detects execution of known hacking tools",
+      "category": "Malware",
+      "severity": "high",
+      "confidence": 0.9,
+      "conditions": {
+        "event_type": "process_start",
+        "process_name_contains": ["mimikatz", "metasploit", "nmap", "netcat", "nc.exe"]
+      },
+      "impact": "system_control",
+      "advisory_template": "suspicious_process"
+    },
+    {
+      "id": "RULE_002",
+      "name": "Multiple Failed Login Attempts",
+      "description": "Detects brute-force authentication attempts",
+      "category": "Brute Force",
+      "severity": "medium",
+      "confidence": 0.8,
+      "conditions": {
+        "event_type": "auth_failure",
+        "count": 5,
+        "time_window": 60
+      },
+      "impact": "privilege_escalation",
+      "advisory_template": "brute_force"
+    },
+    {
+      "id": "RULE_003",
+      "name": "Unusual Port Connection",
+      "description": "Connection to commonly exploited ports",
+      "category": "Network Attack",
+      "severity": "medium",
+      "confidence": 0.7,
+      "conditions": {
+        "event_type": "network_connection",
+        "port_in": [4444, 5555, 6666, 31337]
+      },
+      "impact": "network_access",
+      "advisory_template": "suspicious_port"
+    },
+    {
+      "id": "RULE_004",
+      "name": "Excessive CPU Usage",
+      "description": "Process consuming abnormal CPU resources",
+      "category": "Resource Abuse",
+      "severity": "low",
+      "confidence": 0.6,
+      "conditions": {
+        "event_type": "high_cpu",
+        "cpu_percent": 90,
+        "duration": 30
+      },
+      "impact": "system_control",
+      "advisory_template": "high_resource_usage"
+    },
+    {
+      "id": "RULE_005",
+      "name": "Critical System File Modification",
+      "description": "Unauthorized changes to system files",
+      "category": "File Tampering",
+      "severity": "high",
+      "confidence": 0.85,
+      "conditions": {
+        "event_type": "file_modified",
+        "path_contains": ["System32", "Windows\\System"],
+        "extension_in": [".exe", ".dll", ".sys"]
+      },
+      "impact": "system_control",
+      "advisory_template": "file_tampering"
+    },
+    {
+      "id": "RULE_006",
+      "name": "Excessive Network Connections",
+      "description": "Process making too many network connections",
+      "category": "Network Scan",
+      "severity": "medium",
+      "confidence": 0.75,
+      "conditions": {
+        "event_type": "multiple_connections",
+        "connection_count": 50,
+        "time_window": 60
+      },
+      "impact": "network_access",
+      "advisory_template": "network_scan"
+    },
+    {
+      "id": "RULE_007",
+      "name": "Privilege Escalation Attempt",
+      "description": "Process attempting to gain higher privileges",
+      "category": "Privilege Escalation",
+      "severity": "high",
+      "confidence": 0.9,
+      "conditions": {
+        "event_type": "privilege_change",
+        "from_user": "standard",
+        "to_user": "administrator"
+      },
+      "impact": "privilege_escalation",
+      "advisory_template": "privilege_escalation"
+    },
+    {
+      "id": "RULE_008",
+      "name": "Suspicious Script Execution",
+      "description": "Execution of potentially malicious scripts",
+      "category": "Script Attack",
+      "severity": "medium",
+      "confidence": 0.7,
+      "conditions": {
+        "event_type": "script_execution",
+        "extension_in": [".ps1", ".bat", ".vbs", ".js"]
+      },
+      "impact": "system_control",
+      "advisory_template": "suspicious_script"
+    },
+    {
+      "id": "RULE_009",
+      "name": "Data Exfiltration Indicator",
+      "description": "Large volume of outbound data transfer",
+      "category": "Data Theft",
+      "severity": "high",
+      "confidence": 0.8,
+      "conditions": {
+        "event_type": "network_transfer",
+        "direction": "outbound",
+        "bytes_threshold": 100000000,
+        "time_window": 300
+      },
+      "impact": "data_access",
+      "advisory_template": "data_exfiltration"
+    },
+    {
+      "id": "RULE_010",
+      "name": "Memory Injection Detected",
+      "description": "Process injecting code into another process",
+      "category": "Code Injection",
+      "severity": "high",
+      "confidence": 0.9,
+      "conditions": {
+        "event_type": "memory_injection",
+        "target_process": "any"
+      },
+      "impact": "system_control",
+      "advisory_template": "code_injection"
+    }
+  ],
+  
+  "advisory_templates": {
+    "suspicious_process": {
+      "title": "Suspicious Program Detected",
+      "description": "A potentially harmful program was found running on your system.",
+      "advice": [
+        "Immediately close the suspicious program",
+        "Run a full system antivirus scan",
+        "Check if this program was intentionally installed",
+        "If unsure, disconnect from the network and seek IT support"
+      ],
+      "remediation": "Terminate the process and remove the executable file from the system.",
+      "references": ["MITRE ATT&CK: T1059"]
+    },
+    "brute_force": {
+      "title": "Multiple Failed Login Attempts",
+      "description": "Someone or something is trying to guess your password repeatedly.",
+      "advice": [
+        "Check if YOU are the one trying to log in (maybe wrong password?)",
+        "If not you, this could be an attack",
+        "Change your password immediately to a strong, unique one",
+        "Enable two-factor authentication if available",
+        "Review recent login history"
+      ],
+      "remediation": "Lock the account temporarily and enable account lockout policies.",
+      "references": ["MITRE ATT&CK: T1110"]
+    },
+    "suspicious_port": {
+      "title": "Connection to Unusual Network Port",
+      "description": "A program is communicating through a port commonly used by hackers.",
+      "advice": [
+        "Identify which program is using this port",
+        "Check if this is a legitimate business application",
+        "Consider blocking the port in your firewall",
+        "Monitor for continued suspicious activity"
+      ],
+      "remediation": "Block the port in firewall rules and investigate the source application.",
+      "references": ["Common backdoor ports"]
+    },
+    "high_resource_usage": {
+      "title": "Program Using Too Much Computer Resources",
+      "description": "A program is consuming excessive CPU or memory, which might slow your system.",
+      "advice": [
+        "Check Task Manager to see which program is responsible",
+        "Determine if this is expected (e.g., video rendering, game)",
+        "If unexpected, it could be malware or cryptocurrency miner",
+        "Consider closing or investigating the program"
+      ],
+      "remediation": "Terminate high-resource processes if not legitimate.",
+      "references": ["Resource exhaustion attacks"]
+    },
+    "file_tampering": {
+      "title": "Critical System File Was Modified",
+      "description": "Important system files have been changed, which could compromise security.",
+      "advice": [
+        "This is VERY SERIOUS - system files should not change unexpectedly",
+        "Run System File Checker (sfc /scannow)",
+        "Perform a full malware scan immediately",
+        "Consider restoring from a known good backup",
+        "Contact IT support urgently"
+      ],
+      "remediation": "Run system integrity checks and restore modified files from backup.",
+      "references": ["MITRE ATT&CK: T1036"]
+    },
+    "network_scan": {
+      "title": "Excessive Network Activity Detected",
+      "description": "A program is making many network connections, possibly scanning for vulnerabilities.",
+      "advice": [
+        "Identify the program making these connections",
+        "Check if it's legitimate (antivirus, system update, etc.)",
+        "If unknown, this could be malware or a network scanner",
+        "Disconnect from network if needed",
+        "Run security scans"
+      ],
+      "remediation": "Block the offending process and investigate its purpose.",
+      "references": ["MITRE ATT&CK: T1046"]
+    },
+    "privilege_escalation": {
+      "title": "Unauthorized Privilege Increase Attempt",
+      "description": "A program tried to gain administrator/higher-level access without authorization.",
+      "advice": [
+        "This is a CRITICAL security event",
+        "Check if YOU requested admin access (UAC prompt)",
+        "If not, malware may be trying to take control",
+        "Deny the privilege request",
+        "Run full security scan immediately"
+      ],
+      "remediation": "Block privilege escalation and investigate the source process.",
+      "references": ["MITRE ATT&CK: T1068"]
+    },
+    "suspicious_script": {
+      "title": "Potentially Malicious Script Execution",
+      "description": "A script file (PowerShell, batch file, etc.) is running that might be harmful.",
+      "advice": [
+        "Check what script is running and why",
+        "Scripts can be used by attackers to automate attacks",
+        "If you didn't run it intentionally, stop it",
+        "Review the script content if possible",
+        "Consider disabling script execution if not needed"
+      ],
+      "remediation": "Terminate script execution and analyze script content.",
+      "references": ["MITRE ATT&CK: T1059.001"]
+    },
+    "data_exfiltration": {
+      "title": "Large Data Transfer Detected",
+      "description": "A significant amount of data is being sent out of your system to the internet.",
+      "advice": [
+        "Identify which program is sending data",
+        "Check if this is expected (cloud backup, file upload, etc.)",
+        "If suspicious, this could be data theft in progress",
+        "Immediately disconnect from network if confirmed malicious",
+        "Contact IT security team"
+      ],
+      "remediation": "Block outbound connection and investigate data destination.",
+      "references": ["MITRE ATT&CK: T1048"]
+    },
+    "code_injection": {
+      "title": "Code Injection Detected",
+      "description": "A program is trying to inject code into another program's memory space.",
+      "advice": [
+        "This is EXTREMELY SERIOUS - hallmark of advanced malware",
+        "Disconnect from network immediately",
+        "Do NOT continue using the system",
+        "Run offline security scan if possible",
+        "Contact cybersecurity expert or IT support urgently"
+      ],
+      "remediation": "Isolate system, terminate all suspicious processes, perform deep malware scan.",
+      "references": ["MITRE ATT&CK: T1055"]
+    }
+  }
+}

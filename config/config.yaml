@@ -1,0 +1,172 @@
+# Cybersecurity Threat Advisor - Configuration File
+
+# System Settings
+system:
+  name: "Cybersecurity Threat Advisor"
+  version: "1.0.0"
+  environment: "development"  # development, production
+  debug: true
+
+# Monitoring Configuration
+monitoring:
+  # Interval in seconds between monitoring cycles
+  system_check_interval: 5
+  network_check_interval: 10
+  file_check_interval: 30
+  
+  # System monitoring settings
+  system:
+    enabled: true
+    cpu_threshold: 90  # Alert if CPU usage exceeds this percentage
+    memory_threshold: 85  # Alert if memory usage exceeds this percentage
+    suspicious_process_names:
+      - "mimikatz"
+      - "metasploit"
+      - "nmap"
+      - "nc.exe"
+      - "netcat"
+    
+  # Network monitoring settings
+  network:
+    enabled: true
+    monitor_connections: true
+    suspicious_ports:
+      - 4444  # Metasploit default
+      - 5555  # Common backdoor
+      - 6666  # IRC bot
+      - 31337  # Back Orifice
+    max_connections_per_process: 100
+    
+  # File monitoring settings
+  file:
+    enabled: true
+    watch_directories:
+      - "C:\\Windows\\System32"  # Windows (example)
+      - "C:\\Users"
+      # Add more paths as needed
+    file_extensions_to_monitor:
+      - ".exe"
+      - ".dll"
+      - ".bat"
+      - ".ps1"
+      - ".sh"
+
+# Detection Configuration
+detection:
+  # Rule-based detection
+  rule_based:
+    enabled: true
+    rules_file: "config/rules.json"
+    
+  # ML-based anomaly detection
+  ml_based:
+    enabled: false  # Enable after training model
+    model_path: "src/ml_models/saved_models/anomaly_detector.pkl"
+    contamination: 0.1  # Expected proportion of outliers (10%)
+    
+  # Correlation settings
+  correlation:
+    enabled: true
+    time_window: 60  # seconds to correlate events
+    min_events_for_correlation: 3
+
+# Risk Assessment Configuration
+risk_assessment:
+  # Risk scoring weights (must sum to 1.0)
+  weights:
+    severity: 0.4
+    confidence: 0.3
+    impact: 0.2
+    prevalence: 0.1
+  
+  # Risk thresholds
+  thresholds:
+    low: 0.3
+    medium: 0.6
+    high: 0.85
+  
+  # Impact factors
+  impact_factors:
+    data_access: 3
+    system_control: 5
+    network_access: 4
+    privilege_escalation: 5
+
+# Advisory Configuration
+advisory:
+  enabled: true
+  language: "simple"  # simple, technical, detailed
+  include_remediation: true
+  include_examples: true
+
+# Database Configuration
+database:
+  type: "sqlite"
+  path: "data/db/threats.db"
+  backup_enabled: true
+  backup_interval: 86400  # 24 hours in seconds
+  max_log_age_days: 30  # Delete logs older than 30 days
+
+# Dashboard Configuration
+dashboard:
+  enabled: true
+  host: "127.0.0.1"
+  port: 5000
+  auto_refresh_interval: 10  # seconds
+  max_threats_display: 50
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "json"  # json, text
+  log_to_file: true
+  log_file: "data/logs/app.log"
+  max_log_size_mb: 10
+  backup_count: 5
+
+# Alert Configuration
+alerts:
+  enabled: true
+  high_risk_immediate: true
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender: "your-email@gmail.com"
+    recipients:
+      - "admin@example.com"
+  
+  # Console alerts
+  console:
+    enabled: true
+    colored_output: true
+
+# ML Model Configuration
+ml_models:
+  training:
+    test_size: 0.2
+    random_state: 42
+    n_estimators: 100
+    
+  feature_engineering:
+    scaling: true
+    encoding: "label"  # label, onehot
+    
+  retraining:
+    enabled: false
+    interval_days: 7
+
+# Data Generation (for testing/simulation)
+data_generation:
+  enabled: true
+  simulation_mode: true
+  generate_benign: true
+  generate_malicious: true
+  benign_ratio: 0.9  # 90% benign, 10% malicious
+
+# Performance Settings
+performance:
+  max_threads: 4
+  queue_size: 1000
+  batch_processing: true
+  batch_size: 100
