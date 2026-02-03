@@ -303,8 +303,9 @@ class DatabaseManager:
         
         if row:
             advisory = dict(row)
-            advisory['advice'] = json.loads(advisory['advice'])
-            advisory['references'] = json.loads(advisory['references'])
+            # Handle reference_links field
+            if 'reference_links' in advisory and advisory['reference_links']:
+                advisory['reference_links'] = advisory['reference_links']
             return advisory
         return None
     

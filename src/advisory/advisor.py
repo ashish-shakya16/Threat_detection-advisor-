@@ -117,45 +117,149 @@ class SecurityAdvisor:
         """
         risk_level = threat.get('risk_level', 'Unknown')
         severity = threat.get('severity', 'medium')
+        category = threat.get('category', 'Unknown')
+        threat_name = threat.get('threat_name', 'Unknown Threat')
         
-        # Generic advice based on severity
-        if severity == 'high' or risk_level == 'High':
-            advice = [
-                "This is a serious security issue that requires immediate attention",
-                "Stop using the affected system if possible",
-                "Disconnect from the network to prevent spread",
-                "Run a full security scan",
-                "Contact your IT security team or administrator",
-                "Document what you were doing when this alert appeared"
-            ]
+        # Enhanced advisories based on threat category and severity
+        if category == 'Resource Abuse' or 'CPU' in threat_name or 'Memory' in threat_name:
+            summary = f"Your system is experiencing {threat_name.lower()}, which may indicate resource-intensive applications or potential malware activity."
+            
+            explanation = ("High CPU or memory usage can be caused by legitimate applications, but it can also indicate malicious activity such as cryptomining malware, "
+                          "denial-of-service attacks, or system compromise. Sustained high resource usage can degrade system performance and affect other applications.")
+            
+            recommendations = ("1. Identify the process causing high resource usage using Task Manager\n"
+                             "2. Research the process name online to verify if it's legitimate\n"
+                             "3. Check if the process corresponds to applications you're actively using\n"
+                             "4. Monitor resource usage patterns over time for abnormalities\n"
+                             "5. Consider updating or reinstalling applications that consistently consume excessive resources")
+            
+            remediation_steps = ("• Open Task Manager (Ctrl+Shift+Esc) and sort by CPU or Memory usage\n"
+                               "• Right-click suspicious processes and select 'Open File Location' to verify legitimacy\n"
+                               "• Terminate suspicious processes and check if they restart automatically\n"
+                               "• Run a full system antivirus and anti-malware scan\n"
+                               "• Update all software and operating system patches\n"
+                               "• Consider using Process Explorer for detailed process analysis\n"
+                               "• Review startup programs and disable unnecessary items\n"
+                               "• If issue persists, backup data and perform system restore or clean installation")
+            
+            reference_links = ("Microsoft Process Explorer: https://docs.microsoft.com/en-us/sysinternals/downloads/process-explorer\n"
+                             "How to identify malware: https://www.cisa.gov/malware\n"
+                             "System performance monitoring: https://support.microsoft.com/windows")
+        
+        elif category == 'Network Attack' or 'Network' in threat_name or 'Port' in threat_name:
+            summary = f"Suspicious network activity detected: {threat_name}. This could indicate unauthorized access attempts or network reconnaissance."
+            
+            explanation = ("Unusual network connections may indicate port scanning, brute force attacks, data exfiltration, or communication with command-and-control servers. "
+                          "These activities are often precursors to more serious security breaches and should be investigated immediately.")
+            
+            recommendations = ("1. Identify which application or process is making the network connections\n"
+                             "2. Verify if the destination IP addresses and ports are legitimate\n"
+                             "3. Check firewall logs for patterns of suspicious activity\n"
+                             "4. Temporarily disconnect from the network if compromise is suspected\n"
+                             "5. Scan for malware and rootkits that may be controlling network traffic")
+            
+            remediation_steps = ("• Use 'netstat -ano' command to view active network connections and associated processes\n"
+                               "• Check firewall settings and enable logging for all blocked connections\n"
+                               "• Block suspicious IP addresses and ports in your firewall\n"
+                               "• Run network security scanner (nmap, Wireshark) to identify vulnerabilities\n"
+                               "• Change all passwords if unauthorized access is confirmed\n"
+                               "• Enable two-factor authentication on all accounts\n"
+                               "• Monitor network traffic for data exfiltration attempts\n"
+                               "• Consider isolating affected systems in a separate network segment")
+            
+            reference_links = ("NIST Cybersecurity Framework: https://www.nist.gov/cyberframework\n"
+                             "Network security best practices: https://www.cisa.gov/network-security\n"
+                             "Wireshark documentation: https://www.wireshark.org/docs/")
+        
+        elif severity == 'high' or risk_level == 'High' or risk_level == 'Critical':
+            summary = f"CRITICAL: {threat_name} detected. This is a serious security threat that requires immediate attention to prevent system compromise."
+            
+            explanation = ("High-severity threats pose significant risk to your system's security, data integrity, and privacy. "
+                          "These threats may already have gained unauthorized access or are actively attempting to exploit vulnerabilities. "
+                          "Immediate action is required to prevent data loss, system damage, or unauthorized access.")
+            
+            recommendations = ("1. Immediately isolate the affected system from the network to prevent spread\n"
+                             "2. Do not continue using the system for sensitive operations\n"
+                             "3. Document all observed symptoms and error messages\n"
+                             "4. Run comprehensive malware scans from a clean bootable media\n"
+                             "5. Contact your IT security team or a cybersecurity professional\n"
+                             "6. Preserve forensic evidence if needed for investigation")
+            
+            remediation_steps = ("• IMMEDIATE: Disconnect network cable or disable Wi-Fi\n"
+                               "• Boot into Safe Mode with Networking\n"
+                               "• Run full system scan with updated antivirus and anti-malware tools\n"
+                               "• Check for unauthorized user accounts and scheduled tasks\n"
+                               "• Review system logs for signs of compromise (Event Viewer)\n"
+                               "• Change all passwords from a different, secure device\n"
+                               "• Enable Windows Defender or install reputable security software\n"
+                               "• Apply all pending security updates and patches\n"
+                               "• Consider professional forensic analysis if sensitive data is involved\n"
+                               "• Backup critical data before attempting remediation\n"
+                               "• If remediation fails, perform clean OS reinstallation")
+            
+            reference_links = ("CISA Incident Response: https://www.cisa.gov/incident-response\n"
+                             "SANS Incident Handler's Handbook: https://www.sans.org/reading-room/whitepapers/incident/incident-handlers-handbook-33901\n"
+                             "Microsoft Security Response: https://www.microsoft.com/security")
+        
         elif severity == 'medium' or risk_level == 'Medium':
-            advice = [
-                "This activity requires investigation",
-                "Check if this is expected behavior",
-                "Review recent changes to your system",
-                "Monitor for continued suspicious activity",
-                "Consider running a security scan"
-            ]
+            summary = f"WARNING: {threat_name} requires investigation. This activity is potentially suspicious and may indicate a security concern."
+            
+            explanation = ("Medium-severity threats may not pose immediate danger but should be investigated to determine if they represent "
+                          "legitimate activity or early stages of an attack. These threats could escalate if not addressed properly.")
+            
+            recommendations = ("1. Verify if this activity corresponds to your normal system usage\n"
+                             "2. Review recent software installations and system changes\n"
+                             "3. Check for unauthorized modifications to system files or registry\n"
+                             "4. Monitor the situation for escalation or repeated occurrences\n"
+                             "5. Run routine security scans to ensure no compromise has occurred")
+            
+            remediation_steps = ("• Review the threat details and identify the source application/process\n"
+                               "• Check if recent software updates or installations caused this alert\n"
+                               "• Verify system integrity using 'sfc /scannow' command\n"
+                               "• Update antivirus definitions and run a full scan\n"
+                               "• Review installed programs and remove any unfamiliar software\n"
+                               "• Check browser extensions and remove suspicious ones\n"
+                               "• Enable real-time protection and automatic updates\n"
+                               "• Document the incident for future reference")
+            
+            reference_links = ("Windows System File Checker: https://support.microsoft.com/sfc\n"
+                             "Security baseline recommendations: https://docs.microsoft.com/security\n"
+                             "Threat detection guide: https://www.cisa.gov/cybersecurity-best-practices")
+        
         else:
-            advice = [
-                "This is an informational alert",
-                "Review the activity to ensure it's expected",
-                "No immediate action required unless suspicious",
-                "Keep monitoring your system"
-            ]
+            summary = f"INFORMATIONAL: {threat_name} detected. This is a low-priority alert for your awareness."
+            
+            explanation = ("Low-severity alerts are informational and typically indicate minor anomalies or behaviors that deviate slightly from normal patterns. "
+                          "While they don't require immediate action, it's good practice to be aware of these events.")
+            
+            recommendations = ("1. Review the activity details to understand what triggered this alert\n"
+                             "2. Verify that this behavior is expected for your system usage\n"
+                             "3. No immediate action required unless you notice patterns of suspicious activity\n"
+                             "4. Continue normal operations while maintaining security awareness\n"
+                             "5. Keep your security software updated for ongoing protection")
+            
+            remediation_steps = ("• Review the technical details of this alert in the dashboard\n"
+                               "• Ensure all security software is up-to-date and functioning\n"
+                               "• Perform regular system maintenance and updates\n"
+                               "• Monitor for any escalation or repeated occurrences\n"
+                               "• Maintain good security hygiene (strong passwords, regular backups)\n"
+                               "• No immediate remediation required")
+            
+            reference_links = ("Security awareness training: https://www.cisa.gov/cybersecurity-training\n"
+                             "Best practices guide: https://www.nist.gov/cybersecurity\n"
+                             "Stay informed: https://us-cert.cisa.gov/ncas/tips")
         
         return {
             'threat_id': threat.get('threat_id'),
-            'threat_name': threat.get('threat_name'),
+            'threat_name': threat_name,
             'timestamp': threat.get('timestamp'),
             'risk_level': risk_level,
             'risk_score': threat.get('risk_score', 0),
-            'title': f"Security Alert: {threat.get('category', 'Unknown')}",
-            'description': threat.get('description', 'A potential security issue was detected.'),
-            'advice': advice,
-            'remediation': 'Follow the advice above and consult security documentation.',
-            'references': [],
-            'details': self._format_threat_details(threat)
+            'summary': summary,
+            'explanation': explanation,
+            'recommendations': recommendations,
+            'remediation_steps': remediation_steps,
+            'reference_links': reference_links
         }
     
     def _format_threat_details(self, threat: Dict[str, Any]) -> str:

@@ -16,6 +16,7 @@ pandas==2.0.3              # Data manipulation
 # Web Dashboard
 Flask==3.0.0               # Web framework
 Flask-CORS==4.0.0          # Cross-origin requests
+flask-socketio>=5.6.0      # Real-time WebSocket communication
 
 # Visualization
 matplotlib==3.8.2          # Plotting
